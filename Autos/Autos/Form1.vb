@@ -135,6 +135,9 @@ Public Class Form1
 
     End Sub
 
+    Private Sub ocultarElementos()
+
+    End Sub
     Private Sub cmdClienteSave_Click(sender As Object, e As EventArgs) Handles cmdClienteSave.Click
         Dim c As TCliente = New TCliente()
         If txtClienteApellido.Text.Trim() = "" Then
@@ -216,7 +219,7 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub dgvOperaciones_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvOperaciones.CellClick
+    Private Sub dgvOperaciones_CellClick(sender As Object, e As DataGridViewCellEventArgs)
         LstOperClientes.SelectedValue = dgvOperaciones.CurrentRow.Cells(3).Value
         lstOperVehiculo.SelectedValue = dgvOperaciones.CurrentRow.Cells(4).Value
         pckfecha.Value = dgvOperaciones.CurrentRow.Cells(5).Value
@@ -370,5 +373,9 @@ Public Class Form1
                 v.Cerrar()
             End If
         End If
+    End Sub
+
+    Private Sub cmdOperaciones_Click(sender As Object, e As EventArgs) Handles cmdOperaciones.Click
+        ocultarElementos()
     End Sub
 End Class

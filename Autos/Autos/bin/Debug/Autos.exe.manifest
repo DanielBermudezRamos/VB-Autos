@@ -42,26 +42,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Autos.exe" size="46640">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Autos.exe" size="41520">
       <assemblyIdentity name="Autos" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>gHD6ySH/21J54GCaAIz09PLrvCsav7m1AD2J9eU7gG0=</dsig:DigestValue>
+        <dsig:DigestValue>ppULH+DWGQN2duNunAsTpeV4A0qLdHJELSN3pEAQYLA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MySqlConnector.dll" size="577024">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MySqlConnector.dll" size="576512">
       <assemblyIdentity name="MySqlConnector" version="1.0.0.0" publicKeyToken="D33D3E53AA5F8C92" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0st0S6otcPcWVksDgbaIktgQKxO6AH9AVZ0JGmHCCRE=</dsig:DigestValue>
+        <dsig:DigestValue>HhoF4Eu8zcaG1YacTxb59MF0eC3WOsHu1KZ/ICB+jn0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

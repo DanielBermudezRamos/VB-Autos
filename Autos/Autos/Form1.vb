@@ -5,23 +5,11 @@ Public Class Form1
     Private dr As DataRow
     Private reader As MySqlDataReader
     Private adp As MySqlDataAdapter
+
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ocultarElementos()
         LlenarOperaciones()
-    End Sub
-
-    Private Sub pnlPrincipal_SelectedIndexChanged(sender As Object, e As EventArgs) Handles pnlPrincipal.SelectedIndexChanged
-
-        ' Se recargan los datos al momento de cambiar de TAB
-        Select Case pnlPrincipal.SelectedIndex
-            Case 0 ' Operaciones
-                LlenarOperaciones()
-            Case 1 ' Clientes
-                LlenarClientes()
-            Case 2 ' Vehículo
-                LlenarVehiculos()
-
-        End Select
-
+        MostrarElementos(OperTipo.oper)
     End Sub
 
     Private Sub LlenarOperaciones()
@@ -73,7 +61,6 @@ Public Class Form1
         lstOperVehiculo.DataSource = dt
         lstOperVehiculo.ValueMember = "Codigo"
         lstOperVehiculo.DisplayMember = "Datos"
-        lstOperVehiculo.SelectedIndex = -1
     End Sub
 
     Private Sub LlenarVehiculos()
@@ -83,7 +70,6 @@ Public Class Form1
         dt.Columns.Add("Datos")
         dt.Columns.Add("nombre_modelo")
         dt.Columns.Add("Dominio")
-
         Dim v As TVehiculo = New TVehiculo()
         v.Conectarse()
         reader = v.Consultar()
@@ -95,13 +81,9 @@ Public Class Form1
             dr(3) = reader(3)
             dt.Rows.Add(dr)
         End While
-
-        lstVehiculos.DataSource = dt
-        lstVehiculos.ValueMember = "Codigo"
-        lstVehiculos.DisplayMember = "Datos"
-        lstVehiculos.SelectedIndex = -1
-        txtVehiculoModelo.Clear()
-        txtVehiculoDominio.Clear()
+        lstClientes.DataSource = dt
+        lstClientes.ValueMember = "Codigo"
+        lstClientes.DisplayMember = "Datos"
     End Sub
 
     Private Sub LlenarClientes()
@@ -124,21 +106,182 @@ Public Class Form1
             dr(4) = reader(4)
             dt.Rows.Add(dr)
         End While
-
         lstClientes.DataSource = dt
         lstClientes.ValueMember = "Codigo"
         lstClientes.DisplayMember = "FullName"
-        lstClientes.SelectedIndex = -1
-        txtClienteNombre.Clear()
-        txtClienteApellido.Clear()
-        txtClienteDomicilio.Clear()
-
     End Sub
-
+    '' ocultarElementos
+    ' Oculta todos los elementos antes de cambiar la configuración
+    ' de datos para mostrar.
     Private Sub ocultarElementos()
-
+        ' Ocultar dato 1
+        lblCliente.Hide()
+        lblCliente.Text = "" ' Cliente
+        txtClienteNombre.Clear()
+        txtClienteNombre.Hide()
+        ' Ocultar dato 2
+        lblOperacionesVehiculo.Hide()
+        lblOperacionesVehiculo.Text = "" ' Vehículo
+        txtClienteApellido.Clear()
+        txtClienteApellido.Hide()
+        ' Ocultar dato 3
+        lblOperacionesFecha.Hide()
+        lblOperacionesFecha.Text = "" ' Fecha de Alta
+        txtClienteDomicilio.Clear()
+        txtClienteDomicilio.Hide()
+        pckfecha.Hide()
+        pckfecha.Value = Now
+        ' Ocultar lista de Clientes
+        LstOperClientes.Hide()
+        ' Ocultar lista de Vehículos
+        lstOperVehiculo.Hide()
+        ' Ocultar DataGridView
+        dgvOperaciones.Hide()
+        ' Ocultar listado
+        lstClientes.Hide()
+        ' Ocultar Botón Guardar
+        cmdOperSave.Hide()
+        cmdOperSave.Text = "" ' Guardar
+        ' Ocultar Botón Editar
+        cmdOperEdit.Hide()
+        cmdOperEdit.Text = "" ' Editar
+        ' Ocultar Botón Eliminar
+        cmdOperDel.Hide()
+        cmdOperDel.Text = "" ' Eliminar
     End Sub
-    Private Sub cmdClienteSave_Click(sender As Object, e As EventArgs) Handles cmdClienteSave.Click
+
+    Private Sub MostrarElementos(ByVal Tipo)
+        Select Case Tipo
+            Case OperTipo.oper
+                ' Ocultar dato 1
+                lblCliente.Text = "Cliente:"
+                lblCliente.Show()
+                LstOperClientes.SelectedIndex = -1
+                LstOperClientes.Show()
+                ' Ocultar dato 2
+                lblOperacionesVehiculo.Text = "Vehículo:"
+                lstOperVehiculo.Show()
+                lstOperVehiculo.SelectedIndex = -1
+                lblOperacionesVehiculo.Show()
+                ' Ocultar dato 3
+                lblOperacionesFecha.Text = "Fecha de Alta:"
+                lblOperacionesFecha.Show()
+                pckfecha.Value = Now
+                pckfecha.Show()
+                ' Ocultar lista de Clientes
+                LstOperClientes.Show()
+                ' Ocultar lista de Vehículos
+                lstOperVehiculo.Show()
+                ' Ocultar DataGridView
+                dgvOperaciones.Show()
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+            Case OperTipo.cliente
+                ' Ocultar dato 1
+                lblCliente.Text = "Nombre:" ' Cliente
+                lblCliente.Show()
+                txtClienteNombre.Clear()
+                txtClienteNombre.Show()
+                ' Ocultar dato 2
+                lblOperacionesVehiculo.Text = "Apellido:" ' Vehículo
+                lblOperacionesVehiculo.Show()
+                txtClienteApellido.Clear()
+                txtClienteApellido.Show()
+                ' Ocultar dato 3
+                lblOperacionesFecha.Text = "Domicilio:" ' Fecha de Alta
+                lblOperacionesFecha.Show()
+                txtClienteDomicilio.Clear()
+                txtClienteDomicilio.Show()
+                ' Mostrar listado de Clientes
+                lstClientes.SelectedIndex = -1
+                lstClientes.Show()
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+            Case OperTipo.auto
+                ' Mostrar listado de Vehículos
+                lstClientes.SelectedIndex = -1
+                lstClientes.Show()
+                ' Ocultar dato 1
+                lblCliente.Text = "Modelo:"
+                lblCliente.Show()
+                txtClienteNombre.Clear()
+                txtClienteNombre.Show()
+                ' Ocultar dato 2
+                lblOperacionesVehiculo.Text = "Dominio:"
+                lblOperacionesVehiculo.Show()
+                txtClienteApellido.Clear()
+                txtClienteApellido.Show()
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+        End Select
+    End Sub
+
+    Private Sub LimpiarCampos(ByVal Tipo)
+        Select Case Tipo
+            Case OperTipo.oper
+                ' Ocultar dato 1
+                txtClienteNombre.Clear()
+                ' Ocultar dato 2
+                txtClienteApellido.Clear()
+                ' Ocultar dato 3
+                pckfecha.Value = Now
+                ' Ocultar lista de Clientes
+                LstOperClientes.SelectedIndex = -1
+                ' Ocultar lista de Vehículos
+                lstOperVehiculo.SelectedIndex = -1
+                ' Ocultar DataGridView
+                dgvOperaciones.ClearSelection()
+                ' Ocultar listado
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+                ' Ocultar Botón Editar
+                cmdOperEdit.Hide()
+                cmdOperEdit.Text = "" ' Editar
+                ' Ocultar Botón Eliminar
+                cmdOperDel.Hide()
+                cmdOperDel.Text = "" ' Eliminar
+            Case OperTipo.cliente
+                ' Ocultar dato 1
+                txtClienteNombre.Clear()
+                ' Ocultar dato 2
+                txtClienteApellido.Clear()
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+                ' Ocultar listado
+                lstClientes.SelectedIndex = -1
+                ' Ocultar Botón Editar
+                cmdOperEdit.Hide()
+                cmdOperEdit.Text = "" ' Editar
+                ' Ocultar Botón Eliminar
+                cmdOperDel.Hide()
+                cmdOperDel.Text = "" ' Eliminar
+            Case OperTipo.auto
+                ' Ocultar dato 1
+                txtClienteNombre.Clear()
+                ' Ocultar dato 2
+                txtClienteApellido.Clear()
+                ' Ocultar dato 3
+                txtClienteDomicilio.Clear()
+                ' Ocultar listado
+                lstClientes.SelectedIndex = -1
+                ' Ocultar Botón Guardar
+                cmdOperSave.Show()
+                cmdOperSave.Text = "Guardar"
+                ' Ocultar Botón Editar
+                cmdOperEdit.Hide()
+                cmdOperEdit.Text = "" ' Editar
+                ' Ocultar Botón Eliminar
+                cmdOperDel.Hide()
+                cmdOperDel.Text = "" ' Eliminar
+        End Select
+    End Sub
+
+    Private Sub cmdClienteSave_Click(sender As Object, e As EventArgs)
         Dim c As TCliente = New TCliente()
         If txtClienteApellido.Text.Trim() = "" Then
             MsgBox("El Apellido del Cliente es Requerido")
@@ -165,31 +308,6 @@ Public Class Form1
                 MsgBox("Se produce un error al guardar en la Base de Datos", MsgBoxStyle.Critical)
             End If
             c.Cerrar()
-        End If
-    End Sub
-
-    Private Sub cmdVehiculoSave_Click(sender As Object, e As EventArgs) Handles cmdVehiculoSave.Click
-        Dim v As TVehiculo = New TVehiculo()
-        If txtVehiculoModelo.Text.Trim() = "" Then
-            MsgBox("El Modelo es Requerido")
-            txtVehiculoModelo.SelectAll()
-            Exit Sub
-        ElseIf txtVehiculoDominio.Text.Trim() = "" Then
-            MsgBox("El Dominio es Requerido")
-            txtVehiculoDominio.SelectAll()
-            Exit Sub
-        Else
-            v.Conectarse()
-            If (v.Guardar(txtVehiculoModelo.Text, txtVehiculoDominio.Text) > 0) Then
-                LlenarVehiculos()
-                txtVehiculoModelo.Clear()
-                txtVehiculoDominio.Clear()
-
-                MsgBox("El Vehículo fue Agregado con Éxito", MsgBoxStyle.Exclamation)
-            Else
-                MsgBox("Se produce un error al guardar en la Base de Datos", MsgBoxStyle.Critical)
-            End If
-            v.Cerrar()
         End If
     End Sub
 
@@ -225,18 +343,13 @@ Public Class Form1
         pckfecha.Value = dgvOperaciones.CurrentRow.Cells(5).Value
     End Sub
 
-    Private Sub lstVehiculos_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstVehiculos.SelectedIndexChanged
-        If lstVehiculos.SelectedIndex >= 0 Then
-            txtVehiculoModelo.Text = lstVehiculos.SelectedItem.Row.ItemArray(2)
-            txtVehiculoDominio.Text = lstVehiculos.SelectedItem.Row.ItemArray(3)
-        End If
-    End Sub
-
     Private Sub lstClientes_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstClientes.SelectedIndexChanged
         If lstClientes.SelectedIndex >= 0 Then
             txtClienteNombre.Text = lstClientes.SelectedItem.Row.ItemArray(2)
             txtClienteApellido.Text = lstClientes.SelectedItem.Row.ItemArray(3)
-            txtClienteDomicilio.Text = lstClientes.SelectedItem.Row.ItemArray(4)
+            If txtClienteDomicilio.Visible Then
+                txtClienteDomicilio.Text = lstClientes.SelectedItem.Row.ItemArray(4)
+            End If
         End If
     End Sub
 
@@ -265,7 +378,7 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub cmdClienteEdit_Click(sender As Object, e As EventArgs) Handles cmdClienteEdit.Click
+    Private Sub cmdClienteEdit_Click(sender As Object, e As EventArgs)
         Dim c As TCliente = New TCliente()
         If txtClienteApellido.Text.Trim() = "" Then
             MsgBox("El Apellido del Cliente es Requerido")
@@ -292,34 +405,12 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub cmdVehiculoEdit_Click(sender As Object, e As EventArgs) Handles cmdVehiculoEdit.Click
-        Dim v As TVehiculo = New TVehiculo()
-        If txtVehiculoModelo.Text.Trim() = "" Then
-            MsgBox("El Modelo es Requerido")
-            txtVehiculoModelo.SelectAll()
-            Exit Sub
-        ElseIf txtVehiculoDominio.Text.Trim() = "" Then
-            MsgBox("El Dominio es Requerido")
-            txtVehiculoDominio.SelectAll()
-            Exit Sub
-        Else
-            v.Conectarse()
-            If (v.Modificar(lstVehiculos.SelectedItem.Row.ItemArray(0), txtVehiculoModelo.Text, txtVehiculoDominio.Text) > 0) Then
-                LlenarVehiculos()
-                LstOperClientes.SelectedIndex = -1
-                MsgBox("La Operación fue Modificada con Éxito", MsgBoxStyle.Exclamation)
-            Else
-                MsgBox("Se produce un error al guardar en la Base de Datos", MsgBoxStyle.Critical)
-            End If
-            v.Cerrar()
-        End If
-    End Sub
-
-    Private Sub cdmOperDel_Click(sender As Object, e As EventArgs) Handles cdmOperDel.Click
+    Private Sub cmdOperDel_Click(sender As Object, e As EventArgs) Handles cmdOperDel.Click
         Dim c As TCliente = New TCliente()
         If dgvOperaciones.CurrentRow.Cells(0).Value < 1 Then
-            MsgBox("No ha seleccionado Operaciones para Borrar")
-            Exit Sub
+            'MsgBox("No ha seleccionado Operaciones para Borrar")
+            'Exit Sub
+            LimpiarCampos(OperSelect)
         Else
             If MsgBox("¿Quiere eliminar La Operación " & dgvOperaciones.CurrentRow.Cells(1).Value & "?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                 c.Conectarse()
@@ -335,47 +426,22 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub cmdClienteDel_Click(sender As Object, e As EventArgs) Handles cmdClienteDel.Click
-        Dim c As TCliente = New TCliente()
-        If lstVehiculos.SelectedIndex < 0 Then
-            MsgBox("No ha seleccionado Clientes para Borrar")
-            Exit Sub
-        Else
-            If MsgBox("¿Quiere eliminar el Vehiculo " & lstVehiculos.SelectedItem.row.itemarray(1) & "?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
-                c.Conectarse()
-                If (c.Borrar(lstClientes.SelectedItem.Row.ItemArray(0)) > 0) Then
-                    LlenarClientes()
-                    lstClientes.SelectedIndex = -1
-                    MsgBox("La Operación fue Eliminada", MsgBoxStyle.Exclamation)
-                Else
-                    MsgBox("Se produce un error al acceder en la Base de Datos", MsgBoxStyle.Critical)
-                End If
-                c.Cerrar()
-            End If
-        End If
-    End Sub
-
-    Private Sub cmdVehiculoDel_Click(sender As Object, e As EventArgs) Handles cmdVehiculoDel.Click
-        Dim v As TVehiculo = New TVehiculo()
-        If lstVehiculos.SelectedIndex < 0 Then
-            MsgBox("No ha seleccionado Vehículos para Borrar")
-            Exit Sub
-        Else
-            If MsgBox("¿Quiere eliminar el Vehiculo " & lstVehiculos.SelectedItem.row.itemarray(1) & "?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
-                v.Conectarse()
-                If (v.Borrar(lstVehiculos.SelectedItem.Row.ItemArray(0)) > 0) Then
-                    LlenarVehiculos()
-                    lstVehiculos.SelectedIndex = -1
-                    MsgBox("La Operación fue Eliminada", MsgBoxStyle.Exclamation)
-                Else
-                    MsgBox("Se produce un error al acceder en la Base de Datos", MsgBoxStyle.Critical)
-                End If
-                v.Cerrar()
-            End If
-        End If
-    End Sub
-
     Private Sub cmdOperaciones_Click(sender As Object, e As EventArgs) Handles cmdOperaciones.Click
         ocultarElementos()
+        LlenarOperaciones()
+        MostrarElementos(OperTipo.oper)
     End Sub
+
+    Private Sub cmdClientes_Click(sender As Object, e As EventArgs) Handles cmdClientes.Click
+        ocultarElementos()
+        LlenarClientes()
+        MostrarElementos(OperTipo.cliente)
+    End Sub
+
+    Private Sub cmdVehiculos_Click(sender As Object, e As EventArgs) Handles cmdVehiculos.Click
+        ocultarElementos()
+        LlenarVehiculos()
+        MostrarElementos(OperTipo.auto)
+    End Sub
+
 End Class

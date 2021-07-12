@@ -15,8 +15,6 @@ Public Class TCliente
         Catch ex As Exception
             MsgBox(ex.ToString(), MsgBoxStyle.Critical)
         End Try
-        ' your device ran into
-
     End Function
 
     Public Function Consultar(ByRef codigo As Integer)

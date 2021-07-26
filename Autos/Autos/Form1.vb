@@ -1,38 +1,27 @@
-﻿Imports MySqlConnector
+﻿'Imports MySqlConnector
 Public Class Form1
     Private dt As DataTable = New DataTable("Operaciones")
     Private ds As New DataSet
     Private dr As DataRow
-    Private reader As MySqlDataReader
-    Private adp As MySqlDataAdapter
+    Private reader As MySqlConnector.MySqlDataReader
+    Private adp As MySqlConnector.MySqlDataAdapter
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ocultarElementos()
         LlenarOperaciones()
         MostrarElementos(OperTipo.oper)
+        'dgvOperaciones_CurrentCellChanged(sender, e)
     End Sub
 
     Private Sub LlenarOperaciones()
+        Dim c As TCliente = New TCliente()
+        Dim v As TVehiculo = New TVehiculo()
         Dim o As TOperacion = New TOperacion()
-        o.Conectarse()
-        adp = o.Consultar()
-        If Not ds.Tables.Contains("operaciones") Then
-            ds.Tables.Add("operaciones")
-        Else
-            ds.Tables("operaciones").Clear()
-        End If
-        adp.Fill(ds.Tables("operaciones"))
-        dgvOperaciones.DataSource = ds.Tables("operaciones")
-        dgvOperaciones.Columns(0).Visible = False
-        dgvOperaciones.Columns(3).Visible = False
-        dgvOperaciones.Columns(4).Visible = False
-        pckfecha.Value = Now
         'Datos de los Clientes
         dt.Clear()
         dt = New DataTable("Clientes")
         dt.Columns.Add("Codigo")
         dt.Columns.Add("FullName")
-        Dim c As TCliente = New TCliente()
         c.Conectarse()
         reader = c.Consultar()
         While reader.Read()
@@ -49,7 +38,6 @@ Public Class Form1
         dt = New DataTable("vehiculo")
         dt.Columns.Add("Codigo")
         dt.Columns.Add("Datos")
-        Dim v As TVehiculo = New TVehiculo()
         v.Conectarse()
         reader = v.Consultar()
         While reader.Read()
@@ -61,29 +49,36 @@ Public Class Form1
         lstOperVehiculo.DataSource = dt
         lstOperVehiculo.ValueMember = "Codigo"
         lstOperVehiculo.DisplayMember = "Datos"
+        'Datos de Operaciones
+        o.Conectarse()
+        adp = o.Consultar()
+        If Not ds.Tables.Contains("operaciones") Then
+            ds.Tables.Add("operaciones")
+        Else
+            ds.Tables("operaciones").Clear()
+        End If
+        adp.Fill(ds.Tables("operaciones"))
+        dgvOperaciones.DataSource = ds.Tables("operaciones")
+        dgvOperaciones.Columns(0).Visible = False
+        dgvOperaciones.Columns(3).Visible = False
+        dgvOperaciones.Columns(4).Visible = False
+        pckfecha.Value = Now
     End Sub
 
     Private Sub LlenarVehiculos()
-        dt.Clear()
-        dt = New DataTable("vehiculo")
-        dt.Columns.Add("Codigo")
-        dt.Columns.Add("Datos")
-        dt.Columns.Add("nombre_modelo")
-        dt.Columns.Add("Dominio")
-        Dim v As TVehiculo = New TVehiculo()
-        v.Conectarse()
-        reader = v.Consultar()
-        While reader.Read()
-            dr = dt.NewRow()
-            dr(0) = reader(0)
-            dr(1) = reader(1)
-            dr(2) = reader(2)
-            dr(3) = reader(3)
-            dt.Rows.Add(dr)
-        End While
-        lstClientes.DataSource = dt
-        lstClientes.ValueMember = "Codigo"
-        lstClientes.DisplayMember = "Datos"
+        Dim DVehiculo = New TVehiculo()
+        Dim LVehiculo = New TCtrlBox("vehiculo")
+
+        LVehiculo.AddColum("Codigo")
+        LVehiculo.AddColum("Datos")
+        LVehiculo.AddColum("nombre_modelo")
+        LVehiculo.AddColum("Dominio")
+        DVehiculo.Conectarse()
+        LVehiculo.CargarControl(DVehiculo.Consultar())
+        'lstClientes.DataSource = LVehiculo.getTable()
+        'lstClientes.ValueMember = "Codigo"
+        'lstClientes.DisplayMember = "Datos"
+        lstClientes = LVehiculo.getList("Codigo", "Datos")
     End Sub
 
     Private Sub LlenarClientes()
@@ -149,7 +144,8 @@ Public Class Form1
         cmdOperDel.Hide()
         cmdOperDel.Text = "" ' Eliminar
     End Sub
-
+    ' MostrarElementos
+    ' depende del botón seleccionado, muestras los componentes adecuados ya cargados.
     Private Sub MostrarElementos(ByVal Tipo)
         Select Case Tipo
             Case OperTipo.oper
@@ -173,6 +169,7 @@ Public Class Form1
                 ' Ocultar lista de Vehículos
                 lstOperVehiculo.Show()
                 ' Ocultar DataGridView
+                'dgvOperaciones.ClearSelection()
                 dgvOperaciones.Show()
                 ' Ocultar Botón Guardar
                 cmdOperSave.Show()
@@ -217,6 +214,8 @@ Public Class Form1
                 cmdOperSave.Show()
                 cmdOperSave.Text = "Guardar"
         End Select
+        cmdOperEdit.Hide()
+        cmdOperDel.Hide()
     End Sub
 
     Private Sub LimpiarCampos(ByVal Tipo)
@@ -337,12 +336,6 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub dgvOperaciones_CellClick(sender As Object, e As DataGridViewCellEventArgs)
-        LstOperClientes.SelectedValue = dgvOperaciones.CurrentRow.Cells(3).Value
-        lstOperVehiculo.SelectedValue = dgvOperaciones.CurrentRow.Cells(4).Value
-        pckfecha.Value = dgvOperaciones.CurrentRow.Cells(5).Value
-    End Sub
-
     Private Sub lstClientes_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstClientes.SelectedIndexChanged
         If lstClientes.SelectedIndex >= 0 Then
             txtClienteNombre.Text = lstClientes.SelectedItem.Row.ItemArray(2)
@@ -350,6 +343,11 @@ Public Class Form1
             If txtClienteDomicilio.Visible Then
                 txtClienteDomicilio.Text = lstClientes.SelectedItem.Row.ItemArray(4)
             End If
+            'Mostrar botones de Edición
+            cmdOperEdit.Show()
+            cmdOperDel.Show()
+            cmdOperEdit.Text = "Editar"
+            cmdOperDel.Text = "Eliminar"
         End If
     End Sub
 
@@ -430,6 +428,7 @@ Public Class Form1
         ocultarElementos()
         LlenarOperaciones()
         MostrarElementos(OperTipo.oper)
+        'dgvOperaciones_CurrentCellChanged(sender, e)
     End Sub
 
     Private Sub cmdClientes_Click(sender As Object, e As EventArgs) Handles cmdClientes.Click
@@ -444,4 +443,16 @@ Public Class Form1
         MostrarElementos(OperTipo.auto)
     End Sub
 
+    Private Sub dgvOperaciones_CurrentCellChanged(sender As Object, e As EventArgs) Handles dgvOperaciones.CurrentCellChanged
+        If dgvOperaciones.CurrentRow IsNot Nothing Then
+            LstOperClientes.SelectedValue = dgvOperaciones.CurrentRow.Cells(3).Value
+            lstOperVehiculo.SelectedValue = dgvOperaciones.CurrentRow.Cells(4).Value
+            pckfecha.Value = dgvOperaciones.CurrentRow.Cells(5).Value
+            'Mostrar botones de Edición
+            cmdOperEdit.Show()
+            cmdOperDel.Show()
+            cmdOperEdit.Text = "Editar"
+            cmdOperDel.Text = "Eliminar"
+        End If
+    End Sub
 End Class
